@@ -32,6 +32,13 @@ namespace :gitlab do
     os_name ||= if os_x_version = run("sw_vers -productVersion")
                   "Mac OS X #{os_x_version}"
                 end
+    os_name ||= if run("uname -s").strip == "SunOS"
+                  if File.readable?('/etc/product')
+                    File.read('/etc/product').match(/Name: (.+)/)[1]
+                  else
+                    "SunOS"
+                  end
+                end
     os_name.try(:squish!)
   end
 
